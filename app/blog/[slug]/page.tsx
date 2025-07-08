@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaHeart, FaBookmark, FaTwitter, FaFacebook } from "react-icons/fa"; // Import icons
+import Breadcrumbs from "../../../components/Breadcrumbs";
 
 export const blog_data = [
   {
@@ -192,6 +193,13 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     }
   };
 
+  // Breadcrumb paths
+  const breadcrumbsPaths = [
+    { href: "/", label: "Home" },
+    { href: "/blog", label: "Blogs" },
+    { href: `/blog/${blog?.slug}`, label: blog?.title || "Blog" },
+  ];
+
   // Handle case where blog is not found
   if (!blog) {
     return (
@@ -227,6 +235,7 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
   return (
     <div className="p-8">
+      <Breadcrumbs paths={breadcrumbsPaths} />
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-10 lg:p-12">
         <h1 className="text-4xl font-bold text-gray-800 mb-6">{blog.title}</h1>
         <p className="text-gray-600 mb-4">
