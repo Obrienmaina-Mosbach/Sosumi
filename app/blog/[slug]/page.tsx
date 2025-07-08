@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FaTwitter, FaFacebook } from "react-icons/fa"; // Import icons from react-icons
+import { FaHeart, FaBookmark, FaTwitter, FaFacebook } from "react-icons/fa"; // Import icons
 
 export const blog_data = [
   {
@@ -198,10 +198,10 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-800 text-lg">Blog not found.</p>
         <button
-          onClick={() => router.push("/blog")}
+          onClick={() => router.push("/")} // Navigate to the main page
           className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
         >
-          Back to Blogs
+          Back to Main Page
         </button>
       </div>
     );
@@ -248,23 +248,28 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
 
-        {/* Like Button */}
-        <button
-          onClick={handleLike}
-          className="mt-8 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-        >
-          Like ({likes})
-        </button>
+        {/* Like Icon */}
+        <div className="mt-8 flex items-center gap-4">
+          <button
+            onClick={handleLike}
+            className="text-blue-500 hover:text-blue-600 transition-colors"
+          >
+            <FaHeart className="w-6 h-6" /> {/* Like Icon */}
+          </button>
+          <span>{likes}</span> {/* Display like count */}
+        </div>
 
-        {/* Bookmark Button */}
-        <button
-          onClick={handleBookmark}
-          className={`mt-8 px-4 py-2 rounded-md ${
-            bookmarked ? "bg-purple-500 text-white" : "bg-orange-500 text-white"
-          } hover:bg-purple-600 transition-colors`}
-        >
-          {bookmarked ? "Bookmarked" : "Bookmark"}
-        </button>
+        {/* Bookmark Icon */}
+        <div className="mt-8 flex items-center gap-4">
+          <button
+            onClick={handleBookmark}
+            className={`transition-colors ${
+              bookmarked ? "text-purple-500 hover:text-purple-600" : "text-orange-500 hover:text-orange-600"
+            }`}
+          >
+            <FaBookmark className="w-6 h-6" /> {/* Bookmark Icon */}
+          </button>
+        </div>
 
         {/* Social Media Sharing Buttons */}
         <div className="mt-8 flex gap-4">
@@ -308,10 +313,10 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         </div>
 
         <button
-          onClick={() => router.push("/blog")}
+          onClick={() => router.push("/")} // Navigate to the main page
           className="mt-8 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors"
         >
-          Back to Blogs
+          Back to Main Page
         </button>
       </div>
     </div>

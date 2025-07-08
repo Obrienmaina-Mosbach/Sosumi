@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import connectDB from '../../../Lib/config/db';
-import mongoose from 'mongoose';
+// Removed unused mongoose import
 import { User } from '../../../Lib/models/blogmodel';
 
 // Removed unused userSchema declaration
