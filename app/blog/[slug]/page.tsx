@@ -4,9 +4,11 @@
 "use client";
 
 import React, { useEffect, useState, use } from "react"; // Import 'use' hook
+import { TailSpin } from "react-loader-spinner"; // Import TailSpin from react-loader-spinner
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaTwitter, FaFacebook } from "react-icons/fa"; // Import icons from react-icons
+import Link from "next/link";
 
 export const blog_data = [
   {
@@ -175,6 +177,7 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [userLiked, setUserLiked] = useState(false); // Track if current user liked
   const [likesCount, setLikesCount] = useState(0); // Actual likes count from backend
+  const [likes, setLikes] = useState(0); // State for likes
   interface CommentType {
     _id: string;
     userId: {
@@ -240,7 +243,18 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      setComments((prevComments) => [...prevComments, newComment]);
+      setComments((prevComments) => [
+        ...prevComments,
+        {
+          _id: `${Date.now()}`, // Generate a unique ID
+          userId: {
+            _id: currentUserId || "anonymous",
+            username: "Guest",
+          },
+          content: newComment,
+          createdAt: new Date().toISOString(),
+        },
+      ]);
       setNewComment("");
       // Optionally, send a request to the backend to persist the comment
     }
