@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Header";
-import Footer from "../components/footer"; // Import Footer component
+import Header from "../Components/Header";
+import Footer from "../Components/footer"; // Import Footer component
 import { ToastContainer } from 'react-toastify'; // Import ToastContainer
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 
