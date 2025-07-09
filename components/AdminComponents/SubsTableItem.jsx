@@ -1,4 +1,4 @@
-// app/components/Admincomponents/SubsTableItem.jsx
+// app/components/AdminComponents/SubsTableItem.jsx
 'use client'; // Ensure it's a client component
 
 import React from 'react';

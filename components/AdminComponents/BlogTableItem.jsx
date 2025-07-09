@@ -1,4 +1,4 @@
-// app/components/Admincomponents/BlogTableItem.jsx
+// app/components/AdminComponents/BlogTableItem.jsx
 'use client'; // Ensure it's a client component if using interactive elements
 
 import { assets } from '@/Assets/assets';

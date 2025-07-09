@@ -1,4 +1,4 @@
-// app/components/Admincomponents/Sidebar.jsx
+// app/components/AdminComponents/Sidebar.jsx
 'use client'; // Ensure it's a client component if using Link or other interactive elements
 
 import { assets } from '@/Assets/assets';
