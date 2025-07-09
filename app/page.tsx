@@ -4,11 +4,24 @@
 
 import React from 'react';
 import Link from 'next/link'; // <--- ADDED THIS IMPORT
+import Image from 'next/image';
 
 const HomePage = () => {
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Welcome to Sosumi Blog!</h1>
+      <h1 className="text-3xl sm:text-5xl font-medium flex items-center justify-center gap-2">
+          Welcome to
+          <Link href="/">
+            <Image
+              src="/images/sosumi.png" // Ensure this path is correct in your public folder
+              alt="Sosumi Logo"
+              width={250} // Increased width for a bigger logo
+              height={90} // Increased height for a bigger logo
+              className="inline-block cursor-pointer"
+              priority // Prioritize loading the logo
+            />
+          </Link>
+        </h1>
       <p className="text-lg text-center text-gray-600 mb-12">
         Discover insightful articles on technology, lifestyle, finance, and more.
       </p>
@@ -23,10 +36,10 @@ const HomePage = () => {
       <section className="text-center mt-16">
         <p className="text-xl text-gray-700">Start exploring our articles or sign up to join our community!</p>
         <div className="mt-6 flex justify-center gap-4">
-          <Link href="/blog" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <Link href="/blog" className="px-6 py-3 bg-[#5936BB] text-white rounded-full hover:bg-[#4a2bb2] transition-colors font-medium">
             Browse Blogs
           </Link>
-          <Link href="/signup" className="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+          <Link href="/signup" className="px-6 py-3 border border-[#5936BB] text-[#5936BB] rounded-full hover:bg-[#5936BB] hover:text-white transition-colors font-medium">
             Join Us
           </Link>
         </div>

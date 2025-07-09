@@ -19,7 +19,8 @@ const Header = () => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const response = await axios.get('/api/user'); // Fetch user data
+        // CORRECTED: API call path for fetching user data
+        const response = await axios.get('/api/auth/user'); // Changed from /api/user to /api/auth/user
         if (response.data.user) {
           setIsLoggedIn(true);
           setUserName(response.data.user.firstName || response.data.user.email); // Use first name or email
@@ -102,10 +103,10 @@ const Header = () => {
           </>
         ) : (
           <>
-            <Link href="/signin" className="px-4 py-2 border border-[#5936BB] text-[#5936BB] rounded-md hover:bg-[#5936BB] hover:text-white transition-colors duration-200">
+            <Link href="/signin" className="px-4 py-2 border border-[#5936BB] text-[#5936BB] rounded-full hover:bg-[#5936BB] hover:text-white transition-colors duration-200">
               Sign In
             </Link>
-            <Link href="/signup" className="px-4 py-2 bg-[#5936BB] text-white rounded-md hover:bg-[#4a2bb2] transition-colors duration-200">
+            <Link href="/signup" className="px-4 py-2 bg-[#5936BB] text-white rounded-full hover:bg-[#4a2bb2] transition-colors duration-200">
               Sign Up
             </Link>
           </>
