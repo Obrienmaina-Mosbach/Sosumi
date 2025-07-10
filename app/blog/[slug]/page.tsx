@@ -25,7 +25,8 @@ interface BlogPostType {
   date: string;
   category: string;
   author: string;
-  authorId: string; // Add authorId to check for authorization
+  // CORRECTED: authorId can be a string (ObjectId) or a populated object with _id
+  authorId: string | { _id: string; username?: string; name?: string; profilePictureUrl?: string; };
   authorImg: string;
   likesCount: number; // Assuming backend provides this
   commentsCount: number; // Denormalized count of comments
@@ -328,7 +329,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
 
 
   // --- Check if current user can edit/delete this blog ---
-  const canModify = blog && currentUserId && (blog.authorId === currentUserId || currentUserRole === 'admin');
+  const canModify = blog && currentUserId && (
+    (typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id) === currentUserId || currentUserRole === 'admin'
+  );
 
 
   // --- Loading and Error States ---
@@ -369,6 +372,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     );
   }
 
+  // Determine the author's ID for the link, handling both string and populated object types
+  const authorProfileId = typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id;
+
   const breadcrumbPaths = [
     { label: 'Home', href: '/' },
     { label: 'Blogs', href: '/blog' },
@@ -382,8 +388,11 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
 
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">{blog.title}</h1>
         <div className="flex items-center gap-4 text-gray-600 mb-6">
-            <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
-            <p><strong>Author:</strong> {blog.author}</p>
+            {/* Link to Author Profile Page */}
+            <Link href={`/author/${authorProfileId.toString()}`} className="flex items-center gap-2 hover:underline hover:text-indigo-600 transition-colors">
+                <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
+                <p><strong>Author:</strong> {blog.author}</p>
+            </Link>
             <p><strong>Published on:</strong> {new Date(blog.date).toLocaleDateString()}</p>
         </div>
 
