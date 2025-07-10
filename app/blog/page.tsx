@@ -10,7 +10,7 @@ import Image from "next/image"; // Import Next.js Image component
 import axios from "axios"; // For fetching data from backend
 import { TailSpin } from 'react-loader-spinner'; // For loading indicator
 import { toast } from 'react-toastify'; // For notifications
-import BlogItem from "@/components/BlogItem"; // Assuming BlogItem is in components/BlogItem.jsx
+import BlogItem from "@/Components/BlogItem"; // Assuming BlogItem is in components/BlogItem.jsx
 
 // Define a type for blog data (should match your backend BlogPost model)
 interface BlogItemType {
