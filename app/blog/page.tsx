@@ -24,6 +24,7 @@ interface BlogItemType {
   author: string;
   authorImg: string;
   likesCount: number; // Assuming you'll add this to your model
+  isPublished: boolean; // Added to check for draft status
   // Add other fields as per your BlogPost model
 }
 
@@ -45,8 +46,8 @@ const BlogListPage = () => { // Renamed for clarity
         const response = await axios.get('/api/blog'); // Adjust endpoint if needed
         if (response.data.success && Array.isArray(response.data.blogs)) {
           // Filter for published blogs if your /api/blog returns both drafts and published
-          const publishedBlogs = response.data.blogs.filter((blog: any) => blog.isPublished !== false);
-          setBlogs(publishedBlogs);
+          // For now, we will display all blogs, and the BlogItem will show a "DRAFT" badge
+          setBlogs(response.data.blogs); // Removed filter here to show drafts
         } else {
           toast.error(response.data.msg || "Failed to load blogs.");
           setError(response.data.msg || "Failed to load blogs.");
@@ -112,7 +113,6 @@ const BlogListPage = () => { // Renamed for clarity
         <p className="text-lg text-gray-700 leading-relaxed mt-4 mb-8 max-w-xl mx-auto">
           Discover insights, opinions, and stories from our latest blog entries. Whether you’re here to learn, explore, or simply get inspired — there’s something for everyone.
         </p>
-
       </div>
 
       {/* Search Bar */}
@@ -185,6 +185,7 @@ const BlogListPage = () => { // Renamed for clarity
               title={blog.title}
               description={blog.description}
               link={`/blog/${blog.slug}`} // Link to the individual blog page
+              isDraft={!blog.isPublished} // Pass isDraft prop based on isPublished status
             />
           ))}
         </div>
