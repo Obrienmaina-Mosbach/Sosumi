@@ -5,9 +5,15 @@ import React from 'react';
 import Link from 'next/link'; // Import Link for internal navigation
 import Image from 'next/image'; // Import Image for optimized images
 
-const BlogItem = ({ image, title, description, link }) => {
+// Added isDraft prop
+const BlogItem = ({ image, title, description, link, isDraft }) => {
   return (
-    <div className="max-w-[330px] sm:max-w-[300px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out">
+    <div className="max-w-[330px] sm:max-w-[300px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out relative"> {/* Added relative for positioning badge */}
+      {isDraft && (
+        <span className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-md">
+          DRAFT
+        </span>
+      )}
       <Link href={link}> {/* Wrap the entire card or just the image/title for clickability */}
         <Image
           src={image}
@@ -31,13 +37,5 @@ const BlogItem = ({ image, title, description, link }) => {
     </div>
   );
 };
-
-// No PropTypes needed if using TypeScript or just for clarity in JS
-// BlogItem.propTypes = {
-//   image: PropTypes.string.isRequired,
-//   title: PropTypes.string.isRequired,
-//   description: PropTypes.string.isRequired,
-//   link: PropTypes.string.isRequired,
-// };
 
 export default BlogItem;
