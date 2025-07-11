@@ -7,7 +7,7 @@ import Image from 'next/image';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { TailSpin } from 'react-loader-spinner';
-import Breadcrumbs from '@/components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
+import Breadcrumbs from '@/components/Breadcrumbs'; 
 
 // Define a type for the public author profile data
 interface AuthorProfileType {
@@ -23,7 +23,7 @@ interface AuthorProfileType {
   homepageUrl?: string;
   company?: string;
   city?: string;
-  interests?: string[]; // Assuming interests are stored as an array of strings
+  interests?: string[]; // interests are stored as an array of strings
   registeredAt: string; // Date string
   role: string;
 }

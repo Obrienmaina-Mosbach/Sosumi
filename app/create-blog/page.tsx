@@ -58,9 +58,7 @@ const CreateBlogPage = () => {
         document.execCommand('bold', false, null); // Use null for consistency
       }
     }
-    // Note: 'Enter' key for new paragraphs is usually handled automatically by contentEditable
-    // The browser's default behavior for 'Enter' in contentEditable is to insert a <p> or <div>,
-    // which should be handled by the 'prose' class for display.
+    
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

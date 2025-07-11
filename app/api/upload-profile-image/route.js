@@ -5,9 +5,9 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import connectDB from '@/Lib/config/db'; // Use alias if configured, e.g., '@/lib/config/db'
-import { User } from '@/Lib/models/blogmodel'; // Use alias if configured, e.g., '@/lib/models/blogmodel'
-import { v2 as cloudinary } from 'cloudinary'; // Import Cloudinary SDK
+import connectDB from '@/Lib/config/db'; 
+import { User } from '@/Lib/models/blogmodel'; 
+import { v2 as cloudinary } from 'cloudinary'; 
 
 // Configure Cloudinary using environment variables
 cloudinary.config({
@@ -45,7 +45,7 @@ export async function POST(request) {
     const formData = await request.formData();
     const imageFile = formData.get('profileImage'); // 'profileImage' is the name from the frontend FormData
 
-    if (!imageFile || !(imageFile instanceof Blob)) { // Ensure it's a Blob/File object
+    if (!imageFile || !(imageFile instanceof Blob)) { 
       return NextResponse.json({ message: 'No valid image file provided.' }, { status: 400 });
     }
 
@@ -59,7 +59,7 @@ export async function POST(request) {
         {
           folder: 'sosumi-profile-pictures', // Organize uploads into a specific folder
           resource_type: 'auto', // Automatically determine resource type (image, video, raw)
-          // Optional: Add transformations here if needed, e.g., { width: 200, height: 200, crop: 'fill' }
+          
         },
         (error, result) => {
           if (error) {

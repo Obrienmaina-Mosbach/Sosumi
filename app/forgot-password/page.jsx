@@ -25,9 +25,7 @@ const ForgotPasswordPage = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Even if response.ok is false, the backend might send a generic message
-        // for security reasons (e.g., if email not found).
-        // Check if the message is the generic success message from backend.
+        
         if (data.message && data.message.includes("If a matching account is found")) {
             toast.success(data.message); // Still show as success for generic message
         } else {

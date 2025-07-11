@@ -15,8 +15,8 @@ const SignupPage = () => {
   const router = useRouter();
 
   const handleGoogleSignup = () => {
-    // CORRECTED: Path to Google OAuth initiation API route
-    window.location.href = "/api/google"; // Changed from /api/google to /api/auth/google
+    
+    window.location.href = "/api/google"; 
   };
 
   const handleTraditionalSignup = async (e) => {

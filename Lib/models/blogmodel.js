@@ -1,6 +1,5 @@
 // Lib/models/blogmodel.js
 // This file defines all Mongoose schemas and models for the blog application.
-
 import mongoose from 'mongoose'; // Use import for ES Modules
 
 // 1. User Schema

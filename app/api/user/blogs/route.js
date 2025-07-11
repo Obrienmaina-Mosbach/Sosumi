@@ -7,7 +7,7 @@ import { cookies } from 'next/headers';
 import connectDB from '../../../../Lib/config/db'; // Adjust path as needed
 import { BlogPost, User } from '../../../../Lib/models/blogmodel'; // Corrected import syntax
 
-// Force this route to be dynamic to ensure cookies() is correctly handled.
+// Force  route to be dynamic to ensure cookies() is correctly handled.
 export const dynamic = 'force-dynamic';
 
 // Helper function to authenticate the user (reused from other API routes)
