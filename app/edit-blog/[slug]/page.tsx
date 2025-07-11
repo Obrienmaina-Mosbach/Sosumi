@@ -7,7 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { TailSpin } from 'react-loader-spinner';
 import Image from 'next/image';
-import Breadcrumbs from '@/Components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
+import Breadcrumbs from '@/components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
 
 // Define types for blog data
 interface BlogData {

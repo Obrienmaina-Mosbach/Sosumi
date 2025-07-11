@@ -10,7 +10,7 @@ import { FaTwitter, FaFacebook, FaBookmark, FaRegBookmark, FaHeart, FaRegHeart }
 import axios from "axios"; // Import axios for API calls
 import { toast } from "react-toastify"; // For notifications
 import { TailSpin } from 'react-loader-spinner'; // Example loading spinner
-import Breadcrumbs from '@/Components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
+import Breadcrumbs from '@/components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
 import Link from 'next/link'; // Import Link for navigation to edit page
 import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation dialogs
 

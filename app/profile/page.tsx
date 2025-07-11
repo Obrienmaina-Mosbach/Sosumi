@@ -9,7 +9,7 @@ import axios from 'axios'; // For fetching user data
 import { toast } from 'react-toastify'; // For notifications
 import { TailSpin } from 'react-loader-spinner'; // For loading indicator
 import Image from 'next/image'; // Import Next.js Image component
-import BlogItem from '@/Components/BlogItem'; // Assuming you have a BlogItem component
+import BlogItem from '@/components/BlogItem'; // Assuming you have a BlogItem component
 
 interface BlogPostType {
   _id: string;
