@@ -1,7 +1,7 @@
 // app/api/subscriptions/route.js
 // This file handles API requests for email subscriptions.
 
-import { ConnectDB } from "@/Lib/config/db"; // Ensure this path is correct, consider using aliases
+import connectDB from '@/Lib/config/db';// Ensure this path is correct, consider using aliases
 import EmailModel from "@/Lib/models/EmailModel"; // Ensure this path is correct, consider using aliases
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken'; // For token verification

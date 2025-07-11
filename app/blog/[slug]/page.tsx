@@ -14,141 +14,44 @@ import Breadcrumbs from '@/components/Breadcrumbs'; // Assuming you have a Bread
 import Link from 'next/link'; // Import Link for navigation to edit page
 import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation dialogs
 
-export const blog_data = [
-  {
-    id: 1,
-    title: "A Detailed Step-by-Step Guide to Manage Your Lifestyle",
-    slug: "detailed-lifestyle-guide",
-    description: "How to retire early",
-    content: `
-      <p>Retiring early might sound like a dream, but it can be a practical and achievable goal with the right planning and discipline. This guide outlines a lifestyle management approach that helps you align your daily habits with long-term financial freedom.</p>
-    `,
-    image: "/images/photo1.png",
-    date: new Date().toISOString(),
-    category: "Lifestyle",
-    author: "Naki Des",
-    author_img: "/images/profile1.jpeg",
-    socials: {
-      twitter: "#",
-      linkedin: "#",
-      likes: 0, // Initialize likes property
-    },
-    comments: [], // Add comments property
-  },
-  {
-    id: 2,
-    title: "10 Simple Habits to Improve Your Mental Health",
-    slug: "mental-health-habits",
-    description: "Practical strategies for everyday calm",
-    content: `
-      <p>🧠 “10 Simple Habits to Improve Your Mental Health”</p>
-      <p>Discover ten practical habits to boost mental wellbeing and reduce stress—real strategies that fit into everyday life.</p>
-      <p></p>
-      <p>1. Start Your Day Without Your Phone</p>
-      <p>Avoid diving into social media or emails the moment you wake up. Instead, stretch, drink water, or take 5 minutes to breathe. Set your own tone for the day.</p>
-      <p></p>
-      <p>2. Practice Gratitude</p>
-      <p>Write down three things you’re thankful for every evening. Studies show that gratitude can significantly improve mood and resilience.</p>
-      <p></p>
-      <p>3. Get Outside Daily</p>
-      <p>Nature exposure—even for 10 minutes—has been linked to lower anxiety and improved concentration. A short walk can do wonders.</p>
-      <p></p>
-      <p>4. Sleep Like It Matters (Because It Does)</p>
-      <p>Create a consistent sleep routine. Wind down with no screens before bed, keep your room cool and dark, and aim for 7–9 hours.</p>
-      <p></p>
-      <p>5. Move Your Body</p>
-      <p>You don’t need a gym membership. Stretching, dancing, or walking all release endorphins that help balance stress hormones.</p>
-      <p></p>
-      <p>6. Limit Doomscrolling</p>
-      <p>Set app limits or “focus time” on your phone. Mindless scrolling adds background stress and disrupts sleep patterns.</p>
-      <p></p>
-      <p>7. Talk It Out</p>
-      <p>Whether with a friend, journal, or therapist, expressing how you feel reduces internal pressure and helps you process emotions.</p>
-      <p></p>
-      <p>8. Create Tech-Free Zones</p>
-      <p>Designate parts of your day or home where phones and screens are off-limits—like the dinner table or your bedroom.</p>
-      <p></p>
-      <p>9. Practice Mindfulness (Without the Woo-Woo)</p>
-      <p>Mindfulness just means paying attention. Try 5 minutes of focused breathing or simply eating a meal without distractions.</p>
-      <p></p>
-      <p>10. Say “No” Without Guilt</p>
-      <p>Overcommitting is a fast track to burnout. Respect your limits. Boundaries are a form of self-respect—not selfishness.</p>
-      <p></p>
-      <p>“Mental health is not a destination, but a daily practice. Small actions, repeated often, create lasting change.”</p>
-    `,
-    image: "/images/photo2.png",
-    date: new Date().toISOString(),
-    category: "Health",
-    author: "Amara Ndebele",
-    author_img: "/images/profile2.jpeg",
-    socials: {
-      twitter: "#",
-      linkedin: "#",
-    },
-  },
-  {
-    id: 3,
-    title: "Mastering Your Finances in Your 20s",
-    slug: "master-finances-in-20s",
-    description: "Budgeting, saving, and investing made simple",
-    content: `
-      <p>Your 20s are the perfect time to build habits that will set you up for life. Start by creating a realistic budget that includes saving—even small amounts add up. Build an emergency fund to cover at least 3 months of expenses.</p>
-      <p>Understand your income and track where your money goes. Learn about compound interest, and don’t shy away from investing in index funds or retirement accounts. Focus on needs over wants and avoid debt traps like buy-now-pay-later schemes.</p>
-      <p>*“Being broke in your 20s is normal. Staying broke because you never planned is not.”*</p>
-    `,
-    image: "/images/photo3.png",
-    date: "2025-06-24T12:00:00.000Z",
-    category: "Finance",
-    author: "Leo Matovu",
-    author_img: "/images/profile_icon_3.png",
-    socials: {
-      twitter: "https://twitter.com/leomatovu",
-      linkedin: "https://linkedin.com/in/leomatovu"
-    }
-  },
-  {
-    id: 6,
-    title: "Traveling on a Budget: Secrets from a Pro",
-    slug: "budget-travel-secrets",
-    description: "Explore the world without draining your savings",
-    content: `
-      <p>Budget travel is less about sacrifice and more about strategy. Book flights early, use price alerts, and travel during shoulder seasons. Opt for hostels, shared Airbnbs, or overnight buses to save on accommodation and transit.</p>
-      <p>Use local apps for food, transport, and cultural events. Travel light to avoid baggage fees. And remember, slow travel is not only cheaper—it’s also more fulfilling.</p>
-      <p>*“A tight budget isn’t a barrier. It’s a creative challenge.”*</p>
-    `,
-    image: "/images/photo6.png",
-    date: "2025-06-24T12:00:00.000Z",
-    category: "Travel",
-    author: "Tariq L.",
-    author_img: "/images/profile_icon_6.png",
-    socials: {
-      twitter: "https://twitter.com/tariql",
-      linkedin: "https://linkedin.com/in/tariql"
-    }
-  },
-  {
-    id: 8,
-    title: "How I Built My First App in 30 Days",
-    slug: "first-app-in-30-days",
-    description: "Lessons from a newbie turned full-stack dev",
-    content: `
-      <p>When I set out to build my first app, I had no idea what I was doing. But I set a 30-day deadline and learned as I went. I chose React for the frontend and Firebase for the backend. The key? Start small and iterate.</p>
-      <p>I broke down the idea into screens and features, learned from YouTube and docs, and kept pushing updates—even ugly ones. In the end, I had a working MVP.</p>
-      <p>*“Code something ugly. Launch it anyway. Perfection comes later.”*</p>
-    `,
-    image: "/images/photo8.png",
-    date: "2025-06-24T12:00:00.000Z",
-    category: "Tech",
-    author: "David Z.",
-    author_img: "/images/profile_icon_8.png",
-    socials: {
-      twitter: "https://twitter.com/davidz",
-      linkedin: "https://linkedin.com/in/davidz"
-    }
-  },
-];
+// Define a type for your blog post structure (should match your backend model)
+interface BlogPostType {
+  _id: string; // MongoDB ID
+  title: string;
+  slug: string;
+  description: string;
+  content: string; // HTML content
+  thumbnail: string; // Renamed from 'image' to 'thumbnail' to match backend
+  date: string;
+  category: string;
+  author: string;
+  // CORRECTED: authorId can be a string (ObjectId) or a populated object with _id
+  authorId: string | { _id: string; username?: string; name?: string; profilePictureUrl?: string; };
+  authorImg: string;
+  likesCount: number; // Assuming backend provides this
+  commentsCount: number; // Denormalized count of comments
+  views: number; // For popularity tracking
+}
 
-const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
+// Define a type for comments (matching backend Comment model structure)
+interface CommentType {
+  _id: string;
+  userId: { // Populated user object
+    _id: string;
+    username?: string;
+    name?: string;
+    profilePictureUrl?: string;
+  };
+  content: string;
+  createdAt: string; // Using createdAt from timestamps
+}
+
+// Define props for the component
+interface FullBlogPageProps {
+  params: { slug: string };
+}
+
+const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const router = useRouter();
 
   // CORRECTED: Use React.use() to unwrap params as suggested by Next.js warning.
@@ -342,7 +245,9 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
 
   // --- Check if current user can edit/delete this blog ---
-  const canModify = blog && currentUserId && (blog.authorId === currentUserId || currentUserRole === 'admin');
+  const canModify = blog && currentUserId && (
+    (typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id) === currentUserId || currentUserRole === 'admin'
+  );
 
 
   // --- Loading and Error States ---
@@ -383,6 +288,9 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     );
   }
 
+  // Determine the author's ID for the link, handling both string and populated object types
+  const authorProfileId = typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id;
+
   const breadcrumbPaths = [
     { label: 'Home', href: '/' },
     { label: 'Blogs', href: '/blog' },
@@ -396,8 +304,11 @@ const FullBlogPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">{blog.title}</h1>
         <div className="flex items-center gap-4 text-gray-600 mb-6">
-            <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
-            <p><strong>Author:</strong> {blog.author}</p>
+            {/* Link to Author Profile Page */}
+            <Link href={`/author/${authorProfileId.toString()}`} className="flex items-center gap-2 hover:underline hover:text-indigo-600 transition-colors">
+                <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
+                <p><strong>Author:</strong> {blog.author}</p>
+            </Link>
             <p><strong>Published on:</strong> {new Date(blog.date).toLocaleDateString()}</p>
         </div>
 
