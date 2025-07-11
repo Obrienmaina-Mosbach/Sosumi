@@ -187,15 +187,26 @@ const importBlogs = async () => {
         });
         console.log('MongoDB connected for import.');
 
-        // Find an existing user to assign as author
-        // You might want to get a specific admin user or the first user found.
-        const defaultAuthor = await User.findOne({}); // Finds the first user in the database
+        // --- Debugging and finding the specific user ---
+        console.log('\n--- Attempting to find Petra Namuyiga ---');
+        let defaultAuthor = await User.findOne({ firstName: "Petra", lastName: "Namuyiga" });
+        console.log('Result of findOne by firstName/lastName:', defaultAuthor ? defaultAuthor.email : 'Not found');
+
         if (!defaultAuthor) {
-            console.error('No users found in the database. Please create at least one user before importing blogs.');
+            console.log('Attempting to find Petra by email as fallback...');
+            defaultAuthor = await User.findOne({ email: "petranamatovu@gmail.com" });
+            console.log('Result of findOne by email:', defaultAuthor ? defaultAuthor.email : 'Not found');
+        }
+
+        if (!defaultAuthor) {
+            console.error('User "Petra Namuyiga" (or petranamatovu@gmail.com) not found in the database. Please ensure this user exists before importing blogs. Listing all users below:');
+            const allUsers = await User.find({}).select('firstName lastName email username');
+            console.log(JSON.stringify(allUsers, null, 2)); // Log all users for inspection
             mongoose.connection.close();
             return;
         }
         console.log(`Assigning blogs to user: ${defaultAuthor.email} (ID: ${defaultAuthor._id})`);
+        // --- End of user finding logic ---
 
         let importedCount = 0;
         for (const blogEntry of blog_data) {
