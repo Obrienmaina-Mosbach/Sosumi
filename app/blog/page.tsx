@@ -98,7 +98,7 @@ const BlogListPage = () => { // Renamed for clarity
       {/* Title and Paragraph */}
       <div className="text-center my-12">
         <h1 className="text-3xl sm:text-5xl font-medium flex items-center justify-center gap-2">
-          Welcome to
+          Explore
           <Link href="/">
             <Image
               src="/images/sosumi.png" // Ensure this path is correct in your public folder
