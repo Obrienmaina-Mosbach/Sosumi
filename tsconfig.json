@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "es2020", // Updated to a more modern target
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": true, // Kept strict for type safety
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -26,8 +26,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "app/api/blogs/[slug]/page.jsx"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "next.config.js"]
 }
