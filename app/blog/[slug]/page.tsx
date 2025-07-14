@@ -46,16 +46,16 @@ interface CommentType {
   createdAt: string; // Using createdAt from timestamps
 }
 
-// Define props for the component - Updated to handle Promise<params>
+// Define props for the component - Updated to handle params directly
 interface FullBlogPageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }
 
 const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const router = useRouter();
 
   // State for the resolved slug
-  const [slug, setSlug] = useState<string | null>(null);
+  const [slug, setSlug] = useState<string | null>(params.slug); // Directly use params.slug
   const [blog, setBlog] = useState<BlogPostType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,22 +76,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   // State for current user's ID and role for authorization checks
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
-
-  // Resolve params Promise
-  useEffect(() => {
-    const resolveParams = async () => {
-      try {
-        const resolvedParams = await params;
-        setSlug(resolvedParams.slug);
-      } catch (err) {
-        console.error("Error resolving params:", err);
-        setError("Failed to load page parameters");
-        setLoading(false);
-      }
-    };
-
-    resolveParams();
-  }, [params]);
 
   // --- Fetch Blog Data and Interactive States from Backend ---
   useEffect(() => {
