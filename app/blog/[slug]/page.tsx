@@ -6,64 +6,62 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FaTwitter, FaFacebook, FaBookmark, FaRegBookmark, FaHeart, FaRegHeart } from "react-icons/fa"; // Import icons
-import axios from "axios"; // Import axios for API calls
-import { toast } from "react-toastify"; // For notifications
-import { TailSpin } from 'react-loader-spinner'; // Example loading spinner
-import Breadcrumbs from '@/components/Breadcrumbs'; // Assuming you have a Breadcrumbs component
-import Link from 'next/link'; // Import Link for navigation to edit page
-import Swal from 'sweetalert2'; // Import SweetAlert2 for confirmation dialogs
+import { FaTwitter, FaFacebook, FaBookmark, FaRegBookmark, FaHeart, FaRegHeart } from "react-icons/fa";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { TailSpin } from 'react-loader-spinner';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 // Define a type for your blog post structure (should match your backend model)
 interface BlogPostType {
-  _id: string; // MongoDB ID
+  _id: string;
   title: string;
   slug: string;
   description: string;
-  content: string; // HTML content
-  thumbnail: string; // Renamed from 'image' to 'thumbnail' to match backend
+  content: string;
+  thumbnail: string;
   date: string;
   category: string;
   author: string;
-  // CORRECTED: authorId can be a string (ObjectId) or a populated object with _id
   authorId: string | { _id: string; username?: string; name?: string; profilePictureUrl?: string; };
   authorImg: string;
-  likesCount: number; // Assuming backend provides this
-  commentsCount: number; // Denormalized count of comments
-  views: number; // For popularity tracking
+  likesCount: number;
+  commentsCount: number;
+  views: number;
 }
 
 // Define a type for comments (matching backend Comment model structure)
 interface CommentType {
   _id: string;
-  userId: { // Populated user object
+  userId: {
     _id: string;
     username?: string;
     name?: string;
     profilePictureUrl?: string;
   };
   content: string;
-  createdAt: string; // Using createdAt from timestamps
+  createdAt: string;
 }
 
-// Define props for the component - Updated to handle params directly
+// Define props for the component
 interface FullBlogPageProps {
   params: { slug: string };
 }
 
 const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const router = useRouter();
+  const { slug } = params;
 
-  // State for the resolved slug
-  const [slug, setSlug] = useState<string | null>(params.slug); // Directly use params.slug
   const [blog, setBlog] = useState<BlogPostType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // States for interactive features
   const [bookmarked, setBookmarked] = useState(false);
-  const [userLiked, setUserLiked] = useState(false); // Track if current user liked
-  const [likesCount, setLikesCount] = useState(0); // Actual likes count from backend
+  const [userLiked, setUserLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
 
@@ -71,7 +69,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false); // For delete action
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // State for current user's ID and role for authorization checks
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -80,7 +78,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   // --- Fetch Blog Data and Interactive States from Backend ---
   useEffect(() => {
     const fetchBlogAndInteractiveStates = async () => {
-      if (!slug) return; // Wait for slug to be resolved
+      if (!slug) return;
 
       setLoading(true);
       setError(null);
@@ -90,12 +88,12 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
         if (blogResponse.data.success && blogResponse.data.blog) {
           const fetchedBlog: BlogPostType = blogResponse.data.blog;
           setBlog(fetchedBlog);
-          setLikesCount(fetchedBlog.likesCount || 0); // Initialize likes from fetched data
+          setLikesCount(fetchedBlog.likesCount || 0);
         } else {
           setError(blogResponse.data.msg || "Blog not found.");
           toast.error(blogResponse.data.msg || "Failed to load blog.");
           setLoading(false);
-          return; // Stop execution if blog not found
+          return;
         }
 
         // 2. Fetch Current User's Data for Authorization
@@ -106,7 +104,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             setCurrentUserRole(userResponse.data.user.role);
           }
         } catch (userErr: any) {
-          // It's okay if user is not logged in, just won't have auth for actions
           console.warn("User not authenticated or error fetching user data:", userErr);
           setCurrentUserId(null);
           setCurrentUserRole(null);
@@ -121,16 +118,14 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             console.warn("Could not fetch like status:", likeStatusResponse.data.msg);
           }
         } catch (likeErr: any) {
-          // 401 means not authenticated, which is fine for public pages.
-          // Other errors might indicate a problem.
           if (axios.isAxiosError(likeErr) && likeErr.response?.status === 401) {
-            console.error("Error fetching like status: Not authenticated."); // Specific message for 401
+            console.error("Error fetching like status: Not authenticated.");
           } else if (axios.isAxiosError(likeErr) && likeErr.response?.status === 404) {
-             console.error("Error fetching like status: API route not found (404)."); // Specific message for 404
+            console.error("Error fetching like status: API route not found (404).");
           } else {
             console.error("Error fetching like status:", likeErr);
           }
-          setUserLiked(false); // Default to not liked if error or not authenticated
+          setUserLiked(false);
         }
 
         // 4. Fetch User's Bookmark Status
@@ -147,7 +142,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           } else if (axios.isAxiosError(bookmarkErr) && bookmarkErr.response?.status !== 401) {
             console.error("Error fetching bookmark status:", bookmarkErr);
           }
-          setBookmarked(false); // Default to not bookmarked if error or not authenticated
+          setBookmarked(false);
         }
 
         // 5. Fetch Comments
@@ -160,10 +155,10 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           }
         } catch (commentsErr: any) {
           console.error("Error fetching comments:", commentsErr);
-          setComments([]); // Default to empty array if error
+          setComments([]);
         }
 
-      } catch (err: any) { // Catch any errors from the main blog fetch
+      } catch (err: any) {
         console.error("Error fetching blog or interactive states:", err);
         if (axios.isAxiosError(err) && err.response) {
           setError(err.response.data.msg || "Failed to load blog post. Please try again.");
@@ -178,7 +173,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     };
 
     fetchBlogAndInteractiveStates();
-  }, [slug]); // Re-run when slug changes
+  }, [slug]);
 
   // --- Handle Bookmark (Now Backend-driven) ---
   const handleBookmark = async () => {
@@ -188,7 +183,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     try {
       const response = await axios.post(`/api/blogs/${blog.slug}/bookmark`);
       if (response.data.success) {
-        setBookmarked(response.data.bookmarked); // Update state based on backend response
+        setBookmarked(response.data.bookmarked);
         toast.success(response.data.msg);
       } else {
         toast.error(response.data.msg || "Failed to update bookmark.");
@@ -214,8 +209,8 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     try {
       const response = await axios.post(`/api/blogs/${blog.slug}/likes`);
       if (response.data.success) {
-        setLikesCount(response.data.likesCount); // Update count from backend
-        setUserLiked(response.data.userLiked); // Update user's like status
+        setLikesCount(response.data.likesCount);
+        setUserLiked(response.data.userLiked);
         toast.success(response.data.msg);
       } else {
         toast.error(response.data.msg || "Failed to update like.");
@@ -245,7 +240,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
         content: newComment,
       });
       if (response.data.success && response.data.comment) {
-        setComments((prevComments) => [...prevComments, response.data.comment]); // Add new comment from backend
+        setComments((prevComments) => [...prevComments, response.data.comment]);
         setNewComment("");
         toast.success(response.data.msg);
       } else {
@@ -267,13 +262,11 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   // --- Handle Social Share ---
   const handleShare = (platform: "twitter" | "facebook") => {
     if (!blog) return;
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}/blog/${blog.slug}`; // Use env variable or current origin
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}/blog/${blog.slug}`;
     const text = `Check out this blog: ${blog.title}`;
     if (platform === "twitter") {
       window.open(
-        `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-          text
-        )}&url=${encodeURIComponent(url)}`,
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
         "_blank"
       );
     } else if (platform === "facebook") {
@@ -300,11 +293,10 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
       if (result.isConfirmed) {
         setDeleteLoading(true);
         try {
-          // Use the slug for deletion as per api-blog-slug-route (PUT/DELETE)
           const response = await axios.delete(`/api/blog/${blog.slug}`);
           if (response.data.success) {
             toast.success(response.data.msg || "Blog post deleted successfully!");
-            router.push('/blog'); // Redirect to blog list after deletion
+            router.push('/blog');
           } else {
             toast.error(response.data.msg || "Failed to delete blog post.");
           }
@@ -345,7 +337,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
       <div className="min-h-screen flex flex-col items-center justify-center">
         <p className="text-red-500 text-lg mb-4">{error}</p>
         <button
-          onClick={() => router.push("/blog")} // Or router.back()
+          onClick={() => router.push("/blog")}
           className="mt-4 px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
         >
           Back to Blogs
@@ -354,7 +346,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     );
   }
 
-  if (!blog) { // Should be caught by error state, but as a fallback
+  if (!blog) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <p className="text-gray-800 text-lg mb-4">Blog not found.</p>
@@ -384,15 +376,13 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
 
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">{blog.title}</h1>
         <div className="flex items-center gap-4 text-gray-600 mb-6">
-            {/* Link to Author Profile Page */}
-            <Link href={`/author/${authorProfileId.toString()}`} className="flex items-center gap-2 hover:underline hover:text-indigo-600 transition-colors">
-                <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
-                <p><strong>Author:</strong> {blog.author}</p>
-            </Link>
-            <p><strong>Published on:</strong> {new Date(blog.date).toLocaleDateString()}</p>
+          <Link href={`/author/${authorProfileId.toString()}`} className="flex items-center gap-2 hover:underline hover:text-indigo-600 transition-colors">
+            <Image src={blog.authorImg} alt={blog.author} width={40} height={40} className="rounded-full object-cover"/>
+            <p><strong>Author:</strong> {blog.author}</p>
+          </Link>
+          <p><strong>Published on:</strong> {new Date(blog.date).toLocaleDateString()}</p>
         </div>
 
-        {/* Edit and Delete Blog Buttons (Conditional Rendering) */}
         {canModify && (
           <div className="mb-6 flex justify-end gap-3">
             <Link
@@ -418,20 +408,18 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
         )}
 
         <Image
-          src={blog.thumbnail} // Use 'thumbnail' as per backend model
+          src={blog.thumbnail}
           alt={blog.title}
           width={800}
-          height={400} // Adjusted height for better aspect ratio
+          height={400}
           className="w-full h-48 sm:h-64 object-cover rounded-lg mb-6"
-          priority // Prioritize loading for LCP
+          priority
         />
-        {/* Render blog content using dangerouslySetInnerHTML */}
         <div
-          className="text-gray-700 leading-relaxed prose prose-lg max-w-none" // Added prose classes for better typography
+          className="text-gray-700 leading-relaxed prose prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
 
-        {/* Action Buttons: Like, Bookmark, Share */}
         <div className="mt-8 flex flex-wrap gap-4 items-center">
           <button
             onClick={handleLike}
@@ -441,11 +429,11 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             } ${likeLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {likeLoading ? (
-                <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
+              <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
             ) : userLiked ? (
-                <FaHeart className="w-5 h-5" />
+              <FaHeart className="w-5 h-5" />
             ) : (
-                <FaRegHeart className="w-5 h-5" />
+              <FaRegHeart className="w-5 h-5" />
             )}
             Like ({likesCount})
           </button>
@@ -458,11 +446,11 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             } ${bookmarkLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {bookmarkLoading ? (
-                <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
+              <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
             ) : bookmarked ? (
-                <FaBookmark className="w-5 h-5" />
+              <FaBookmark className="w-5 h-5" />
             ) : (
-                <FaRegBookmark className="w-5 h-5" />
+              <FaRegBookmark className="w-5 h-5" />
             )}
             {bookmarked ? "Bookmarked" : "Bookmark"}
           </button>
@@ -481,35 +469,34 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           </button>
         </div>
 
-        {/* Comments Section */}
         <div className="mt-12">
           <h3 className="text-2xl font-semibold mb-4 text-gray-800">Comments ({comments.length})</h3>
           <div className="space-y-4 mb-6">
             {comments.length > 0 ? (
-                comments.map((comment, index) => (
-                    <div key={comment._id || index} className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
-                        <div className="flex items-center mb-2">
-                            {comment.userId?.profilePictureUrl && (
-                                <Image
-                                    src={comment.userId.profilePictureUrl}
-                                    alt={comment.userId.username || comment.userId.name || 'User'}
-                                    width={30}
-                                    height={30}
-                                    className="rounded-full object-cover mr-2"
-                                />
-                            )}
-                            <p className="font-medium text-gray-800">
-                                {comment.userId?.username || comment.userId?.name || `User ${comment.userId?._id.substring(0, 8)}...`}
-                            </p>
-                            <span className="text-sm text-gray-500 ml-auto">
-                                {new Date(comment.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                            </span>
-                        </div>
-                        <p className="text-gray-700">{comment.content}</p>
-                    </div>
-                ))
+              comments.map((comment, index) => (
+                <div key={comment._id || index} className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
+                  <div className="flex items-center mb-2">
+                    {comment.userId?.profilePictureUrl && (
+                      <Image
+                        src={comment.userId.profilePictureUrl}
+                        alt={comment.userId.username || comment.userId.name || 'User'}
+                        width={30}
+                        height={30}
+                        className="rounded-full object-cover mr-2"
+                      />
+                    )}
+                    <p className="font-medium text-gray-800">
+                      {comment.userId?.username || comment.userId?.name || `User ${comment.userId?._id.substring(0, 8)}...`}
+                    </p>
+                    <span className="text-sm text-gray-500 ml-auto">
+                      {new Date(comment.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                  <p className="text-gray-700">{comment.content}</p>
+                </div>
+              ))
             ) : (
-                <p className="text-gray-500">No comments yet. Be the first to comment!</p>
+              <p className="text-gray-500">No comments yet. Be the first to comment!</p>
             )}
           </div>
 
@@ -530,9 +517,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             }`}
           >
             {commentLoading ? (
-                <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
+              <TailSpin height="20" width="20" color="#fff" ariaLabel="loading" />
             ) : (
-                'Add Comment'
+              'Add Comment'
             )}
           </button>
         </div>
