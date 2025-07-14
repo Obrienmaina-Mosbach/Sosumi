@@ -8,7 +8,8 @@ import Image from 'next/image'; // Import Image for optimized images
 // Added isDraft prop
 const BlogItem = ({ image, title, description, link, isDraft }) => {
   return (
-    <div className="max-w-[330px] sm:max-w-[300px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out relative"> {/* Added relative for positioning badge */}
+    // Removed max-w-[330px] sm:max-w-[300px] to allow items to be wider within grid columns
+    <div className="w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out relative"> {/* Added relative for positioning badge */}
       {isDraft && (
         <span className="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-md">
           DRAFT

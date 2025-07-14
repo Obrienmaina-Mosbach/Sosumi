@@ -1,19 +1,19 @@
 // app/api/blogs/[slug]/likes/route.ts
 // This route handles toggling likes for a specific blog post.
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'; // Import NextRequest
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import connectDB from '../../../../../Lib/config/db'; // Adjust path as needed
 import { BlogPost, Like, User } from '../../../../../Lib/models/blogmodel'; // Adjust path as needed
-import mongoose from 'mongoose'; // For ObjectId validation
+// mongoose is not directly used in the logic for ObjectId validation here, so it can be removed if not needed elsewhere.
+// import mongoose from 'mongoose'; // For ObjectId validation
 
 // --- Authentication Middleware Helper ---
 // This function checks if the request is authenticated and returns the user.
 // It's a reusable helper for protected API routes.
 async function authenticateRequest(request: Request) {
-    // CORRECTED: Explicitly await cookies() to resolve the warning.
-    const cookieStore = await cookies();
+    const cookieStore = cookies(); // No need to await cookies() directly here, it's a function
     const tokenCookie = cookieStore.get('token');
 
     if (!tokenCookie || !tokenCookie.value) {
@@ -36,7 +36,10 @@ async function authenticateRequest(request: Request) {
 
 // --- POST Request Handler (Toggle Like) ---
 // This route allows an authenticated user to like or unlike a blog post.
-export async function POST(request: Request, context: { params: { slug: string } }) { // Renamed second argument to 'context'
+export async function POST(
+    request: NextRequest, // Use NextRequest for clarity, though Request works
+    { params }: { params: { slug: string } } // Correct destructuring for dynamic parameters
+) {
     await connectDB(); // Ensure database connection
 
     // Apply authentication check
@@ -46,8 +49,7 @@ export async function POST(request: Request, context: { params: { slug: string }
     }
     const requestingUser = authResult.user;
 
-    // CORRECTED: Explicitly await context.params to resolve the warning.
-    const { slug } = await context.params;
+    const { slug } = params; // params is directly available, no await needed
 
     try {
         // 1. Find the blog post by slug
@@ -102,7 +104,10 @@ export async function POST(request: Request, context: { params: { slug: string }
 
 // --- GET Request Handler (Optional: Check if user liked a post) ---
 // This route can be used by the frontend to check if the current user has liked a specific post.
-export async function GET(request: Request, context: { params: { slug: string } }) { // Renamed second argument to 'context'
+export async function GET(
+    request: NextRequest, // Use NextRequest for clarity, though Request works
+    { params }: { params: { slug: string } } // Correct destructuring for dynamic parameters
+) {
     await connectDB();
 
     const authResult = await authenticateRequest(request);
@@ -112,8 +117,7 @@ export async function GET(request: Request, context: { params: { slug: string } 
     }
     const requestingUser = authResult.user;
 
-    // CORRECTED: Explicitly await context.params to resolve the warning.
-    const { slug } = await context.params;
+    const { slug } = params; // params is directly available, no await needed
 
     try {
         const blogPost = await BlogPost.findOne({ slug });
