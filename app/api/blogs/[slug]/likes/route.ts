@@ -6,8 +6,8 @@ import connectDB from '../../../../../Lib/config/db';
 import { BlogPost, Like, User } from '../../../../../Lib/models/blogmodel';
 
 // --- Authentication Middleware Helper ---
-async function authenticateRequest(request: NextRequest) {
-    const cookieStore = cookies();
+async function authenticateRequest(_request: NextRequest) {
+    const cookieStore = await cookies();
     const tokenCookie = cookieStore.get('token');
 
     if (!tokenCookie || !tokenCookie.value) {
@@ -30,14 +30,14 @@ async function authenticateRequest(request: NextRequest) {
 // --- POST Request Handler (Toggle Like) ---
 export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
     await connectDB();
+    // Extract slug from the URL
+    const { slug } = params;
 
     const authResult = await authenticateRequest(request);
     if (!authResult.authenticated) {
         return NextResponse.json({ success: false, msg: authResult.message }, { status: authResult.status });
     }
     const requestingUser = authResult.user;
-
-    const { slug } = params;
 
     try {
         const blogPost = await BlogPost.findOne({ slug });
@@ -81,8 +81,6 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
         return NextResponse.json({ success: false, msg: 'Internal Server Error', error: error.message }, { status: 500 });
     }
 }
-
-// --- GET Request Handler (Check if user liked a post) ---
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
     await connectDB();
 
