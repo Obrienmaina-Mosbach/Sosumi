@@ -1,8 +1,5 @@
 // app/blog/[slug]/page.tsx
-// This component displays a single blog post, fetched from the backend.
-
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,7 +11,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
 
-// Define a type for your blog post structure (should match your backend model)
+// Define a type for your blog post structure
 interface BlogPostType {
   _id: string;
   title: string;
@@ -25,14 +22,14 @@ interface BlogPostType {
   date: string;
   category: string;
   author: string;
-  authorId: string | { _id: string; username?: string; name?: string; profilePictureUrl?: string; };
+  authorId: string | { _id: string; username?: string; name?: string; profilePictureUrl?: string };
   authorImg: string;
   likesCount: number;
   commentsCount: number;
   views: number;
 }
 
-// Define a type for comments (matching backend Comment model structure)
+// Define a type for comments
 interface CommentType {
   _id: string;
   userId: {
@@ -53,37 +50,32 @@ interface FullBlogPageProps {
 const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const router = useRouter();
   const { slug } = params;
-
   const [blog, setBlog] = useState<BlogPostType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   // States for interactive features
   const [bookmarked, setBookmarked] = useState(false);
   const [userLiked, setUserLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [newComment, setNewComment] = useState("");
-
   // Loading states for actions
   const [commentLoading, setCommentLoading] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-
   // State for current user's ID and role for authorization checks
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
 
-  // --- Fetch Blog Data and Interactive States from Backend ---
+  // Fetch Blog Data and Interactive States from Backend
   useEffect(() => {
     const fetchBlogAndInteractiveStates = async () => {
       if (!slug) return;
-
       setLoading(true);
       setError(null);
       try {
-        // 1. Fetch Blog Post Data
+        // Fetch Blog Post Data
         const blogResponse = await axios.get(`/api/blog/${slug}`);
         if (blogResponse.data.success && blogResponse.data.blog) {
           const fetchedBlog: BlogPostType = blogResponse.data.blog;
@@ -96,7 +88,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           return;
         }
 
-        // 2. Fetch Current User's Data for Authorization
+        // Fetch Current User's Data for Authorization
         try {
           const userResponse = await axios.get('/api/auth/user');
           if (userResponse.data.user) {
@@ -109,7 +101,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           setCurrentUserRole(null);
         }
 
-        // 3. Fetch User's Like Status
+        // Fetch User's Like Status
         try {
           const likeStatusResponse = await axios.get(`/api/blogs/${slug}/likes`);
           if (likeStatusResponse.data.success) {
@@ -128,7 +120,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           setUserLiked(false);
         }
 
-        // 4. Fetch User's Bookmark Status
+        // Fetch User's Bookmark Status
         try {
           const bookmarkStatusResponse = await axios.get(`/api/blogs/${slug}/bookmark`);
           if (bookmarkStatusResponse.data.success) {
@@ -145,7 +137,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           setBookmarked(false);
         }
 
-        // 5. Fetch Comments
+        // Fetch Comments
         try {
           const commentsResponse = await axios.get(`/api/blogs/${slug}/comments`);
           if (commentsResponse.data.success) {
@@ -157,7 +149,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           console.error("Error fetching comments:", commentsErr);
           setComments([]);
         }
-
       } catch (err: any) {
         console.error("Error fetching blog or interactive states:", err);
         if (axios.isAxiosError(err) && err.response) {
@@ -175,10 +166,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     fetchBlogAndInteractiveStates();
   }, [slug]);
 
-  // --- Handle Bookmark (Now Backend-driven) ---
+  // Handle Bookmark
   const handleBookmark = async () => {
     if (!blog || bookmarkLoading) return;
-
     setBookmarkLoading(true);
     try {
       const response = await axios.post(`/api/blogs/${blog.slug}/bookmark`);
@@ -201,10 +191,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     }
   };
 
-  // --- Handle Like (Backend-driven) ---
+  // Handle Like
   const handleLike = async () => {
     if (!blog || likeLoading) return;
-
     setLikeLoading(true);
     try {
       const response = await axios.post(`/api/blogs/${blog.slug}/likes`);
@@ -230,10 +219,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     }
   };
 
-  // --- Handle Add Comment (Backend-driven) ---
+  // Handle Add Comment
   const handleAddComment = async () => {
     if (!blog || !newComment.trim() || commentLoading) return;
-
     setCommentLoading(true);
     try {
       const response = await axios.post(`/api/blogs/${blog.slug}/comments`, {
@@ -259,7 +247,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     }
   };
 
-  // --- Handle Social Share ---
+  // Handle Social Share
   const handleShare = (platform: "twitter" | "facebook") => {
     if (!blog) return;
     const url = `${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}/blog/${blog.slug}`;
@@ -277,10 +265,9 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     }
   };
 
-  // --- Handle Delete Blog Post ---
+  // Handle Delete Blog Post
   const handleDeleteBlog = async () => {
     if (!blog || deleteLoading) return;
-
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -317,12 +304,12 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     });
   };
 
-  // --- Check if current user can edit/delete this blog ---
+  // Check if current user can edit/delete this blog
   const canModify = blog && currentUserId && (
     (typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id) === currentUserId || currentUserRole === 'admin'
   );
 
-  // --- Loading and Error States ---
+  // Loading and Error States
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -362,7 +349,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
 
   // Determine the author's ID for the link, handling both string and populated object types
   const authorProfileId = typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id;
-
   const breadcrumbPaths = [
     { label: 'Home', href: '/' },
     { label: 'Blogs', href: '/blog' },
@@ -373,7 +359,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     <div className="p-4 sm:p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-10 lg:p-12">
         <Breadcrumbs paths={breadcrumbPaths} />
-
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4 sm:mb-6">{blog.title}</h1>
         <div className="flex items-center gap-4 text-gray-600 mb-6">
           <Link href={`/author/${authorProfileId.toString()}`} className="flex items-center gap-2 hover:underline hover:text-indigo-600 transition-colors">
@@ -382,7 +367,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           </Link>
           <p><strong>Published on:</strong> {new Date(blog.date).toLocaleDateString()}</p>
         </div>
-
         {canModify && (
           <div className="mb-6 flex justify-end gap-3">
             <Link
@@ -406,7 +390,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             </button>
           </div>
         )}
-
         <Image
           src={blog.thumbnail}
           alt={blog.title}
@@ -419,7 +402,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
           className="text-gray-700 leading-relaxed prose prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         ></div>
-
         <div className="mt-8 flex flex-wrap gap-4 items-center">
           <button
             onClick={handleLike}
@@ -437,7 +419,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             )}
             Like ({likesCount})
           </button>
-
           <button
             onClick={handleBookmark}
             disabled={bookmarkLoading}
@@ -454,7 +435,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             )}
             {bookmarked ? "Bookmarked" : "Bookmark"}
           </button>
-
           <button
             onClick={() => handleShare("twitter")}
             className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
@@ -468,7 +448,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             <FaFacebook className="w-5 h-5" /> Facebook
           </button>
         </div>
-
         <div className="mt-12">
           <h3 className="text-2xl font-semibold mb-4 text-gray-800">Comments ({comments.length})</h3>
           <div className="space-y-4 mb-6">
@@ -499,7 +478,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
               <p className="text-gray-500">No comments yet. Be the first to comment!</p>
             )}
           </div>
-
           <h4 className="text-xl font-semibold mb-3 text-gray-800">Add a Comment</h4>
           <textarea
             value={newComment}
@@ -523,7 +501,6 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
             )}
           </button>
         </div>
-
         <button
           onClick={() => router.push("/blog")}
           className="mt-12 px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors duration-200"
