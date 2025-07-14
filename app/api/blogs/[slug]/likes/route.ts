@@ -28,10 +28,10 @@ async function authenticateRequest(_request: NextRequest) {
 }
 
 // --- POST Request Handler (Toggle Like) ---
-export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
     await connectDB();
-    // Extract slug from the URL
-    const { slug } = params;
+    // Extract slug from the URL - await the params
+    const { slug } = await params;
 
     const authResult = await authenticateRequest(request);
     if (!authResult.authenticated) {
@@ -81,7 +81,8 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
         return NextResponse.json({ success: false, msg: 'Internal Server Error', error: error.message }, { status: 500 });
     }
 }
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
     await connectDB();
 
     const authResult = await authenticateRequest(request);
@@ -90,7 +91,8 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     }
     const requestingUser = authResult.user;
 
-    const { slug } = params;
+    // Extract slug from the URL - await the params
+    const { slug } = await params;
 
     try {
         const blogPost = await BlogPost.findOne({ slug });
