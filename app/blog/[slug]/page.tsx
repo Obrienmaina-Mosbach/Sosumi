@@ -3,7 +3,7 @@
 
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaTwitter, FaFacebook, FaBookmark, FaRegBookmark, FaHeart, FaRegHeart } from "react-icons/fa"; // Import icons
@@ -46,17 +46,16 @@ interface CommentType {
   createdAt: string; // Using createdAt from timestamps
 }
 
-// Define props for the component
+// Define props for the component - Updated to handle Promise<params>
 interface FullBlogPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const router = useRouter();
 
-  // CORRECTED: Use React.use() to unwrap params as suggested by Next.js warning.
-  const { slug } = use(params);
-
+  // State for the resolved slug
+  const [slug, setSlug] = useState<string | null>(null);
   const [blog, setBlog] = useState<BlogPostType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -78,10 +77,27 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
 
+  // Resolve params Promise
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params;
+        setSlug(resolvedParams.slug);
+      } catch (err) {
+        console.error("Error resolving params:", err);
+        setError("Failed to load page parameters");
+        setLoading(false);
+      }
+    };
+
+    resolveParams();
+  }, [params]);
 
   // --- Fetch Blog Data and Interactive States from Backend ---
   useEffect(() => {
     const fetchBlogAndInteractiveStates = async () => {
+      if (!slug) return; // Wait for slug to be resolved
+
       setLoading(true);
       setError(null);
       try {
@@ -177,9 +193,7 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
       }
     };
 
-    if (slug) {
-      fetchBlogAndInteractiveStates();
-    }
+    fetchBlogAndInteractiveStates();
   }, [slug]); // Re-run when slug changes
 
   // --- Handle Bookmark (Now Backend-driven) ---
@@ -327,12 +341,10 @@ const FullBlogPage: React.FC<FullBlogPageProps> = ({ params }) => {
     });
   };
 
-
   // --- Check if current user can edit/delete this blog ---
   const canModify = blog && currentUserId && (
     (typeof blog.authorId === 'string' ? blog.authorId : blog.authorId._id) === currentUserId || currentUserRole === 'admin'
   );
-
 
   // --- Loading and Error States ---
   if (loading) {
